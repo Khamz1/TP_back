@@ -12,9 +12,9 @@ const UserController = {
             return res.status(400).send({ error: 'Все поля обязательны' });
         }
         try {
-            const existingUser = await prisma.user.findUnique({ where: { email } });
+            const existingUser = await prisma.user.findUnique({where: {email}});
             if (existingUser) {
-                return res.status(400).json({ error: "Такой пользователь уже зарегистрирован" });
+                return res.status(400).json({error: "Такой пользователь уже зарегистрирован"});
             }
 
             const hashedPassword = await bcrypt.hash(password, 10);
@@ -26,7 +26,7 @@ const UserController = {
                 fs.mkdirSync(uploadDir);
             }
 
-            const avatarPath = path.join(uploadDir, avatarName);
+            const avatarPath = path.join(__dirname, "/../uploads", avatarName);
             fs.writeFileSync(avatarPath, png);
 
             const user = await prisma.user.create({
@@ -34,7 +34,7 @@ const UserController = {
                     email,
                     password: hashedPassword,
                     name,
-                    avatarUrl: avatarPath,
+                    avatarUrl: `/uploads/${avatarName}`
                 },
             });
 
